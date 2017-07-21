@@ -3,8 +3,8 @@ import * as ReduxSaga from 'redux-saga'
 
 const BatchActionType = '@@typed-redux/batched-actions'
 
-interface BatchAction {
-  type: string,
+interface BatchAction extends Redux.Action {
+  type: typeof BatchActionType,
   actions: Redux.Action[]
 }
 
@@ -16,6 +16,14 @@ export const batchable = <S, A extends Redux.Action>(reducer: (state: S, action:
     return reducer(state, action)
   }
 }
+
+export const batchAction = <A extends Redux.Action>(actions: A[]): BatchAction => {
+  return {
+    type: BatchActionType,
+    actions
+  }
+}
+
 export const batchEnhancer =  <S>(sagaMiddleware: ReduxSaga.SagaMiddleware<S>): Redux.StoreEnhancer<S> => (createStore) => (reducer, preloadedState) => {
   const store = createStore(reducer, preloadedState)
 
